@@ -29,8 +29,10 @@ Run the following steps:
 git clone https://github.com/dasheck0/topic-map-clustering
 cd topic-map-clustering
 npm i 
-node index.js
+node --max-old-space-size=8192 index.js 
 ```
+
+You probably have to run node with increased heap size due to higher dimensional vectors (which take a lot of heap). Adjust to what your machine is capable of running ;) You may also reduce component size when creating vectors (see index.js:84).
 
 No need to create a `.env` file at the moment, since data is loaded from publically available S3 bucket.
 

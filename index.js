@@ -51,7 +51,7 @@ const convertResponseToVector = (data) => {
 };
 
 const convertVectorsToClusterableData = (vectors, titles) => {
-    const collection = featureCollection(vectors.map((vector, index) => point([vector[0], vector[1]], { title: titles[index] })));
+    const collection = featureCollection(vectors.map((vector, index) => point(vector, { title: titles[index] })));
     return collection;
 };
 
@@ -81,20 +81,20 @@ const convertVectorsToClusterableData = (vectors, titles) => {
 
     // shape vector with 2 compoents to plot data on a 2D plane
     console.log("Shaping vectors");
-    const umap = new UMAP({ nComponents: 2 });
+    const umap = new UMAP({ nComponents: 4 });
     const embeddings = umap.fit(convertedData);
 
     // plot data
-    console.log("Plotting data");
-    const plotData = [{
-        x: embeddings.map(xy => xy[0]),
-        y: embeddings.map(xy => xy[1]),
-        text: titles.slice(0, maxCount),
-        mode: 'markers',
-        type: 'scatter'
-    }];
+    // console.log("Plotting data");
+    // const plotData = [{
+    //     x: embeddings.map(xy => xy[0]),
+    //     y: embeddings.map(xy => xy[1]),
+    //     text: titles.slice(0, maxCount),
+    //     mode: 'markers',
+    //     type: 'scatter'
+    // }];
 
-    nodeplot.plot(plotData);
+    // nodeplot.plot(plotData);
 
     // run dbscan cluster 
     console.log("Running dbscan");
@@ -104,7 +104,10 @@ const convertVectorsToClusterableData = (vectors, titles) => {
     // analyse cluster and write them to file system as json
     console.log("Analysing clusters");
     const clusters = lodash.groupBy(clustered.features, 'properties.cluster');
-    Object.keys(clusters).forEach(key => {
+    const keys = Object.keys(clusters);
+
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
         const fileKey = key === 'undefined' ? 'noise' : key;
         const features = clusters[key];
         const corpus = new Corpus(
@@ -120,5 +123,5 @@ const convertVectorsToClusterableData = (vectors, titles) => {
         };
 
         fs.writeFileSync(`./clusters/cluster_${fileKey}.json`, JSON.stringify(result, null, 2));
-    });
+    }
 })();
