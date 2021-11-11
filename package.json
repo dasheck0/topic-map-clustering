@@ -1,0 +1,27 @@
+{
+  "name": "dasheck0-text-clustering",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo Error: no test specified && exit 1"
+  },
+  "author": "Stefan Neidig <s.neidig@appcom-interactive.de> (https://appcom-interactive.de)",
+  "license": "MIT",
+  "dependencies": {
+    "@turf/clusters-dbscan": "^6.5.0",
+    "@turf/turf": "^6.5.0",
+    "axios": "^0.24.0",
+    "csv-parse": "^4.16.3",
+    "dotenv": "^10.0.0",
+    "hdbscanjs": "^1.0.12",
+    "lodash": "^4.17.21",
+    "mkdirp": "^1.0.4",
+    "ml-hclust": "^3.1.0",
+    "nodeplotlib": "^0.7.6",
+    "rimraf": "^3.0.2",
+    "tiny-tfidf": "^0.9.1",
+    "umap-js": "^1.3.3"
+  }
+}
