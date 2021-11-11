@@ -1,13 +1,12 @@
 {
   "name": "dasheck0-text-clustering",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a proof of concept finding semantic clusters in data",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo Error: no test specified && exit 1"
   },
-  "author": "Stefan Neidig <s.neidig@appcom-interactive.de> (https://appcom-interactive.de)",
+  "author": "Stefan Neidig <stefan@rpdev.net>",
   "license": "MIT",
   "dependencies": {
     "@turf/clusters-dbscan": "^6.5.0",
