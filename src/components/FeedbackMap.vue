@@ -10,7 +10,7 @@ import ScatterChart from './ScatterChart.vue';
 
 export default Vue.extend({
   components: { ScatterChart },
-  props: ['chartData'],
+  props: ['chartData', 'onClick'],
   data() {
     return {
       styles: {
@@ -38,6 +38,13 @@ export default Vue.extend({
               },
             },
           ],
+        },
+        onClick: (_, point) => {
+          const clickedPoint = point[0];
+          const datasetIndex = clickedPoint?._datasetIndex;
+          const index = clickedPoint?._index;
+
+          this.onClick?.(datasetIndex, index);
         },
       },
     };

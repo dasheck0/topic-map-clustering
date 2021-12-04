@@ -2,8 +2,10 @@ import axios from 'axios';
 import { UMAP } from 'umap-js';
 import { point, featureCollection } from '@turf/turf';
 import * as clustersDbscan from '@turf/clusters-dbscan';
-import { groupBy } from 'lodash';
+import { groupBy, flatten, uniqBy } from 'lodash';
 import * as randomColor from 'randomcolor';
+import { Corpus } from "tiny-tfidf";
+import * as stopWords from 'stopwords';
 
 import { ClusteredTextDto, PointDto, ScatterChartDataDto, TextEmbeddingDto } from './data.dto';
 
@@ -65,17 +67,30 @@ export default class DataHandler {
         const clusters = groupBy(clusterdCollection.features, 'properties.cluster');
 
         const colors = randomColor({ luminosity: 'light', count: Object.keys(clusters).length, seed: 42 });
-        const newClusters = Object.keys(clusters).map((key, index) => ({
-            color: colors[index],
-            name: key,
-            tags: [],
-            points: clusters[key].map((point) => ({
-                x: point.geometry.coordinates[0],
-                y: point.geometry.coordinates[1],
-                title: point.properties.title
-            }))
-        }));
+        const newClusters = Object.keys(clusters).map((key, index) => {
+            const cluster = clusters[key];
 
-        return { clusters: [mainCluster, ...newClusters] };
+            const corpus = new Corpus(
+                cluster.map((_, index: number) => `document_${index}`),
+                cluster.map((feature) => feature.properties.title),
+                false,
+                stopWords.en
+            );
+
+            return {
+                color: colors[index],
+                name: key,
+                tags: uniqBy(flatten(cluster.map((_, index) => corpus.getTopTermsForDocument(`document_${index}`).map((term: any) => ({ term: term[0].toLowerCase(), value: term[1] })))), 'term'),
+                points: clusters[key].map((point) => ({
+                    x: point.geometry.coordinates[0],
+                    y: point.geometry.coordinates[1],
+                    title: point.properties.title
+                }))
+            };
+        });
+
+        return { clusters: newClusters };
     }
+
+
 }
