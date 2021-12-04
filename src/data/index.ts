@@ -4,7 +4,7 @@ import { point, featureCollection } from '@turf/turf';
 import * as clustersDbscan from '@turf/clusters-dbscan';
 import { groupBy, flatten, uniqBy, orderBy } from 'lodash';
 import randomColor from 'randomcolor';
-import * as stopWords from 'stopwords-en';
+import stopWords from 'stopwords-en';
 import Sentiment from 'sentiment';
 import { Corpus } from "tiny-tfidf";
 import { ClusteredTextDto, PointDto, TextEmbeddingDto } from './data.dto';
