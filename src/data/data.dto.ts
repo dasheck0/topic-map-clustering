@@ -41,6 +41,12 @@ export interface ClusterDto {
 
 export interface PointDto {
     title: string;
+    sentiment: SentimentDto;
     x: number;
     y: number;
+}
+
+export interface SentimentDto {
+    score: number;
+    comparative: number;
 }
