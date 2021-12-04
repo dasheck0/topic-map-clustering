@@ -122,3 +122,6 @@ clusters/
 tripadvisor_hotel_reviews.csv
 text_embeddings.json
 BX*
+
+*.csv
+text_embeddings*
