@@ -25,7 +25,7 @@ export default Vue.extend({
         },
         tooltips: {
           callbacks: {
-            title: function (item, data) {
+            title: function (item: any, data: any) {
               return data.labels[item.index];
             },
           },
@@ -39,7 +39,7 @@ export default Vue.extend({
             },
           ],
         },
-        onClick: (_, point) => {
+        onClick: (event: any, point: any) => {
           const clickedPoint = point[0];
           const datasetIndex = clickedPoint?._datasetIndex;
           const index = clickedPoint?._index;

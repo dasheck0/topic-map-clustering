@@ -3,13 +3,11 @@ import { UMAP } from 'umap-js';
 import { point, featureCollection } from '@turf/turf';
 import * as clustersDbscan from '@turf/clusters-dbscan';
 import { groupBy, flatten, uniqBy, orderBy } from 'lodash';
-import * as randomColor from 'randomcolor';
-import { Corpus } from "tiny-tfidf";
+import randomColor from 'randomcolor';
 import * as stopWords from 'stopwords-en';
 import Sentiment from 'sentiment';
-
-
-import { ClusteredTextDto, PointDto, ScatterChartDataDto, TextEmbeddingDto } from './data.dto';
+import { Corpus } from "tiny-tfidf";
+import { ClusteredTextDto, PointDto, TextEmbeddingDto } from './data.dto';
 
 export default class DataHandler {
     constructor() {
@@ -41,7 +39,8 @@ export default class DataHandler {
                     points: embeddings.map((embedding, index) => ({
                         x: embedding[0],
                         y: embedding[1],
-                        title: textEmbedding.titles[index]
+                        title: textEmbedding.titles[index],
+                        sentiment: new Sentiment().analyze(textEmbedding.titles[index])
                     }))
                 }]
             };
@@ -75,7 +74,7 @@ export default class DataHandler {
                 cluster.map((_, index: number) => `document_${index}`),
                 cluster.map((feature) => feature.properties.title),
                 false,
-                stopWords.default
+                stopWords
             );
 
             return {

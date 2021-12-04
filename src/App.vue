@@ -124,11 +124,7 @@ export default Vue.extend({
   },
   methods: {
     onPointClick(datasetIndex: number, index: number) {
-      const cluster = this.newCluster.clusters[datasetIndex];
-      const point = cluster.points[index];
-
-      console.log('hfjsfhdjfdhjk', cluster);
-      this.currentCluster = cluster;
+      this.currentCluster = this.newCluster?.clusters[datasetIndex];
     },
     cluster(distance: number) {
       if (this.allCluster) {
