@@ -13,6 +13,11 @@ Here are some learnings:
 - We should try the [Sentence XLM-R](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/blocks/xlm-r-encoder) instead of [Universal Sentence Encoder](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/blocks/universal-sentence-encoder), to create embeddings and compare results
 - We shape the 512-component embedding of the texts to 2-dimensional vectors, so that we can plot them on a 2D plane. This might result in information loss. We should use higher dimensional vectors and apply dbscan to that to see if we get better quality results.
 
+## Demo
+With Reviews about Disneyland (see: https://www.kaggle.com/arushchillar/disneyland-reviews)
+
+https://topic-map-clustering.vercel.app/ 
+
 ## Development
 <!-- section: Development -->
 <!-- If you software is developed within a team you shhould include this section. Describe how to setup thhe project. Include dependencies, conventions and other things to know in order to start developing. In short: After reading this section everyone should be able to develop this piece of software. -->
