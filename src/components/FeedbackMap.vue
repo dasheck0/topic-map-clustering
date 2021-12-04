@@ -1,0 +1,51 @@
+<template>
+  <div class="feedback-map">
+    <scatter-chart :chartData="chartData" :options="options" :styles="styles" />
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import ScatterChart from './ScatterChart.vue';
+
+export default Vue.extend({
+  components: { ScatterChart },
+  props: ['chartData'],
+  data() {
+    return {
+      styles: {
+        height: '100%',
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        height: 500,
+        legend: {
+          display: true,
+        },
+        tooltips: {
+          callbacks: {
+            title: function (item, data) {
+              return data.labels[item.index];
+            },
+          },
+        },
+        scales: {
+          xAxes: [
+            {
+              gridLines: {
+                display: false,
+              },
+            },
+          ],
+        },
+      },
+    };
+  },
+});
+</script>
+
+<style lang="scss" scoped>
+.feedback-map {
+}
+</style>

@@ -20,32 +20,32 @@ const token = process.env.TOKEN;
 const getTextEmbeddings = async (texts) => {
     // commented this, so that it works without access to peltarion API for demo purpose
 
-    // const data = {
-    //     rows: texts.map(text => ({ question: text })),
-    // };
+    const data = {
+        rows: texts.map(text => ({ question: text })),
+    };
 
-    // try {
-    //     return await axios({
-    //         method: 'post',
-    //         maxContentLength: Infinity,
-    //         maxBodyLength: Infinity,
-    //         url,
-    //         data,
-    //         headers: {
-    //             'Authorization': `Bearer ${token}`,
-    //             'Content-Type': 'application/json'
-    //         }
-    //     });
-    // } catch (error) {
-    //     console.log(error);
-    // }
+    try {
+        return await axios({
+            method: 'post',
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity,
+            url,
+            data,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
 
-    console.log("Downloading data. Might take a while");
-    const url = 'https://dasheck0-public.s3.eu-central-1.amazonaws.com/text_embeddings2.json';
-    const { data } = await axios.get(url);
-    console.log("Downloaded data");
+    // console.log("Downloading data. Might take a while");
+    // const url = 'https://dasheck0-public.s3.eu-central-1.amazonaws.com/text_embeddings2.json';
+    // const { data } = await axios.get(url);
+    // console.log("Downloaded data");
 
-    return { data };
+    // return { data };
 };
 
 const convertResponseToVector = (data) => {
@@ -60,8 +60,8 @@ const convertVectorsToClusterableData = (vectors, titles) => {
 (async () => {
     // configurations
 
-    const inputFilePath = './input.csv';
-    const maxCount = 1000;
+    const inputFilePath = './DisneylandReviews.csv';
+    const maxCount = 1;
 
     // prepare directories
     console.log("Preparing directories");
@@ -72,10 +72,15 @@ const convertVectorsToClusterableData = (vectors, titles) => {
     console.log("Loading data");
     const csvDataAsString = fs.readFileSync(inputFilePath, 'utf8');
     const records = parse(csvDataAsString, { columns: true, skip_empty_lines: true, trim: true, delimiter: ',' });
-    const titles = records.map(record => record['text']).slice(0, maxCount);
+    const titles = records.map(record => record['Review_Text']).slice(0, maxCount);
 
     const { data } = await getTextEmbeddings(titles);
-    // fs.writeFileSync('./text_embeddings.json', JSON.stringify(data));
+    const outputData = {
+        ...data,
+        titles
+    };
+
+    fs.writeFileSync('./text_embeddings3.json', JSON.stringify(outputData));
 
     // convert data from API to vectors
     console.log("Converting data from API to vectors");
