@@ -15,7 +15,7 @@
           </div>
           <div class="h3 mt-5">Options:</div>
           <div>Max distance of points in cluster:</div>
-          <vue-slider class="mt-2" v-model="clusterDistance" :min="0" :max="100" :interval="0.5" />
+          <vue-slider class="mt-2" v-model="clusterDistance" :min="0" :max="200" :interval="1" />
         </div>
       </div>
       <div class="col">
@@ -149,7 +149,7 @@ export default Vue.extend({
   async mounted() {
     const dataHandler = new DataHandler();
     this.allCluster = await dataHandler.loadDataFromUrl(
-      'https://dasheck0-public.s3.eu-central-1.amazonaws.com/text_embeddings3.json'
+      'https://dasheck0-public.s3.eu-central-1.amazonaws.com/text_embeddings_g_hgx_babbage.json'
     );
 
     this.cluster(this.clusterDistance);
