@@ -50,3 +50,14 @@ export interface SentimentDto {
     score: number;
     comparative: number;
 }
+
+export enum ClusterAlgorithm {
+    DB_SCAN = 0,
+    K_MEANS = 1
+}
+
+export interface ClusterOptions {
+    algorithm: ClusterAlgorithm;
+    distance?: number;
+    k?: number;
+}

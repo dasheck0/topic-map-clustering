@@ -1,3 +1,4 @@
+import { KMeansResponseData } from './kmeans.dto';
 import axios from 'axios';
 import { UMAP } from 'umap-js';
 import { point, featureCollection } from '@turf/turf';
@@ -7,7 +8,8 @@ import randomColor from 'randomcolor';
 import stopWords from 'stopwords-en';
 import Sentiment from 'sentiment';
 import { Corpus } from "tiny-tfidf";
-import { ClusteredTextDto, PointDto, TextEmbeddingDto } from './data.dto';
+import { ClusteredTextDto, PointDto, TextEmbeddingDto, ClusterOptions, ClusterAlgorithm } from './data.dto';
+import * as kmeans from 'node-kmeans';
 
 export default class DataHandler {
     constructor() {
@@ -60,7 +62,57 @@ export default class DataHandler {
         }
     }
 
-    static cluster(data: ClusteredTextDto, distance: number): ClusteredTextDto {
+    static async cluster(data: ClusteredTextDto, options: ClusterOptions): Promise<ClusteredTextDto> {
+        switch (options.algorithm) {
+            case ClusterAlgorithm.DB_SCAN:
+                return DataHandler.clusterWithDBScan(data, options.distance);
+
+            case ClusterAlgorithm.K_MEANS:
+                return DataHandler.clusterWithKMeans(data, options.k);
+
+            default:
+                console.log("Options", options);
+                throw new Error('Unknown cluster algorithm ' + options.algorithm);
+        }
+    }
+
+    private static async clusterWithKMeans(data: ClusteredTextDto, k?: number): Promise<ClusteredTextDto> {
+        if (!k || k <= 0) {
+            throw new Error('k must be set and greater than 0');
+        }
+
+        const mainCluster = data.clusters[0];
+        const kMeansData = mainCluster.points.map((vector: PointDto) => [vector.x, vector.y]);
+        const colors = randomColor({ luminosity: 'light', count: k, seed: 42 });
+
+        return new Promise((resolve, reject) => {
+            kmeans.clusterize(kMeansData, { k }, (error: any, response: KMeansResponseData[]) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    const clusters = response.map((item, index) => ({
+                        color: colors[index],
+                        name: `Cluster: ${index + 1}`,
+                        tags: [],
+                        points: item.cluster.map((point: number[], pointIndex: number) => ({
+                            x: point[0],
+                            y: point[1],
+                            title: mainCluster.points[item.clusterInd[pointIndex]].title,
+                            sentiment: mainCluster.points[item.clusterInd[pointIndex]].sentiment
+                        }))
+                    }));
+
+                    resolve({ clusters });
+                }
+            });
+        });
+    }
+
+    private static async clusterWithDBScan(data: ClusteredTextDto, distance?: number): Promise<ClusteredTextDto> {
+        if (!distance) {
+            throw new Error('Distance is required for DB-SCAN clustering');
+        }
+
         const mainCluster = data.clusters[0];
 
         const collection = featureCollection(mainCluster.points.map((vector: PointDto) => point([vector.x, vector.y], { title: vector.title })));
@@ -79,7 +131,7 @@ export default class DataHandler {
 
             return {
                 color: colors[index],
-                name: key === 'undefined' ? 'Unclustered' : key,
+                name: key === 'undefined' ? 'Unclustered' : `Cluster: ${key}`,
                 tags: orderBy(uniqBy(flatten(cluster.map((_, index) => corpus.getTopTermsForDocument(`document_${index}`).map((term: any) => ({ term: term[0].toLowerCase(), value: term[1] })))), 'term'), ['value'], ['desc']),
                 points: clusters[key].map((point) => ({
                     x: point.geometry.coordinates[0],
